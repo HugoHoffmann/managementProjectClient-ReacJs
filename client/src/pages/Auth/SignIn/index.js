@@ -26,10 +26,10 @@ class SignIn extends Component{
 
         const { email, password } = this.state;
 
-        // const { signInRequest } = this.props;
+        const { signInRequest } = this.props;
 
         //call action redux
-        AuthTypes.signInRequest(email, password);
+        signInRequest(email, password);
     }
     render(){
         const { email, password } = this.state;
