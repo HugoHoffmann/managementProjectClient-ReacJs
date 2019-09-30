@@ -1,27 +1,58 @@
-import React from 'react';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
+
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import { AuthTypes } from '~/store/ducks/auth';
 
 import Button from '~/styles/components/Button'
 import { Container, SignForm } from '../styles';
 
-const SignIn = () => {
-    return (
-        <Container>
-            <SignForm onSubmit={ () => {} }>
-                <h1>Boas Vindas</h1>
+class SignIn extends Component{
+    // static propTypes = {
+    //     signInRequest: PropTypes.func.isRequired,
+    // }
+    state = {
+        email: '',
+        password: '',
+    }
+    handleInputChange = (e) => {
+        this.setState({[e.target.name]: e.target.value})
 
-                <span>E-mail</span>
-                <input type="email" name="email"/>
+    }
+    handlesubmit = (e) => {
+        e.preventDefault();
+        console.log('teste')
 
-                <span>Senha</span>
-                <input type="password" name="password" />
+        const { email, password } = this.state;
 
-                <Button size="big" type="submit">
-                    Entrar
-                </Button>
+        // const { signInRequest } = this.props;
 
-            </SignForm>
-        </Container>
-    );
+        //call action redux
+        AuthTypes.signInRequest(email, password);
+    }
+    render(){
+        const { email, password } = this.state;
+        return (
+            <Container>
+                <SignForm onSubmit={ this.handlesubmit }>
+                    <h1>Boas Vindas</h1>
+
+                    <span>E-mail</span>
+                    <input type="email" name="email" value={email} onChange={this.handleInputChange} />
+
+                    <span>Senha</span>
+                    <input type="password" name="password" value={password} onChange={this.handleInputChange} />
+
+                    <Button size="big" type="submit" onClick={ this.handlesubmit } >
+                        Entrar
+                    </Button>
+
+                </SignForm>
+            </Container> 
+        );
+    }
 }
-
-export default SignIn;
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(AuthTypes, dispatch); 
+export default connect(null, mapDispatchToProps)(SignIn);
