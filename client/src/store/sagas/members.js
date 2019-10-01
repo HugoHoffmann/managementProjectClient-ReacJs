@@ -10,18 +10,22 @@ export function* getMembers(){
     yield put(MembersActions.getMembersSuccess(response.data));
 }
 
-// export function* createProject({ title }){
-//     try {
-//         const response = yield call(api.post, 'projects', {title});
 
-//         yield put(ProjectsActions.createProjectSuccess(response.data));
-//         yield put(ProjectsActions.closeProjectModal());
-//     } catch (error) {
-//         yield put(toastrActions.add({
-//             type: 'error',
-//             title: 'Erro na operação',
-//             message: 'contate o suporte'
-//         }) )
-//     }
+export function* updateMember({ id, roles }){
+    try {
+        yield call(api.put, `members/${id}`, {roles: roles.map(role => role.id)});
 
-// }
+        yield put(toastrActions.add({
+            type: 'success',
+            title: 'Membro atualizado',
+            message: 'O membro foi atualizado com sucesso'
+        }) )
+    } catch (error) {
+        yield put(toastrActions.add({
+            type: 'error',
+            title: 'Erro na operação',
+            message: 'contate o suporte'
+        }) )
+    }
+
+}
