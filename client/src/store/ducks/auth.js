@@ -1,7 +1,7 @@
 import { createReducer, createActions } from 'reduxsauce'
 import Immutable from 'seamless-immutable';
 
-export const { Types, Creators } = createActions({
+const { Types, Creators } = createActions({
     signInRequest: ['email', 'password'],
     signInSuccess: ['token'],
 });
@@ -18,7 +18,7 @@ const INITIAL_STATE = Immutable({
 
 export const success = (state, {token}) => {
     console.log(token);
-    state.merge({ signedIn: true, token })
+    return state.merge({ signedIn: true, token })
 }
 
 export const reducer = createReducer(INITIAL_STATE, {
