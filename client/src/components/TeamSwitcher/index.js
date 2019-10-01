@@ -3,8 +3,11 @@ import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
 import TeamsActions from '~/store/ducks/teams';
-import { Container, TeamList, Team, NewTeam } from './styles';
+import AuthActions from '~/store/ducks/auth';
+
+import { Container, TeamList, Team, NewTeam, Logout } from './styles';
 import Modal from '~/components/Modal';
 import Button from '~/styles/components/Button';
 
@@ -15,6 +18,7 @@ class TeamSwitcher extends Component {
         openTeamModal: PropTypes.func.isRequired,
         closeTeamModal: PropTypes.func.isRequired,
         createTeamRequest: PropTypes.func.isRequired,
+        signOut: PropTypes.func.isRequired,
         teams: PropTypes.shape({
             data: PropTypes.arrayOf(PropTypes.shape({
                 id: PropTypes.number,
@@ -25,7 +29,7 @@ class TeamSwitcher extends Component {
     state = {
         newTeam: '',
     }
-    componentDidMount(){
+    componentDidMount() {
         const { getTeamsRequest } = this.props;
 
         getTeamsRequest();
@@ -48,42 +52,46 @@ class TeamSwitcher extends Component {
 
         createTeamRequest(newTeam);
     }
-  render() {
-    const { teams, openTeamModal, closeTeamModal } = this.props;
-    const { newTeam } = this.state;
-    return (
-        <Container>
-            <TeamList>
-                { teams.data.map(team => (
-                    <Team key={team.id} onClick={() => this.handleTeamSelect(team)}>
-                        <img 
-                            alt={team.name} 
-                            src={`https://ui-avatars.com/api/?font-size=0.33&background=7159c1&color=fff&name=${team.name}`} />
-                    </Team>
-                )) }
-            </TeamList>
-            <NewTeam onClick={openTeamModal}>
-                    Novo
-            </NewTeam>
-            { teams.teamModalOpen && (
-                <Modal>
-                    <h1>Criar time</h1>
+    render() {
+        const { teams, openTeamModal, closeTeamModal, signOut } = this.props;
+        const { newTeam } = this.state;
+        return (
+            <Container>
+                <TeamList>
+                    {teams.data.map(team => (
+                        <Team key={team.id} onClick={() => this.handleTeamSelect(team)}>
+                            <img
+                                alt={team.name}
+                                src={`https://ui-avatars.com/api/?font-size=0.33&background=7159c1&color=fff&name=${team.name}`} />
+                        </Team>
+                    ))}
 
-                    <form>
-                        <span>NOME</span>
-                        <input name="newTeam" value={newTeam} onChange={this.handleInputChange}/>
-                        <Button onClick={this.handleCreateTeam} size="big" type="submit">
-                            Salvar
+                    <NewTeam onClick={openTeamModal}>
+                        Novo
+            </NewTeam>
+                    {teams.teamModalOpen && (
+                        <Modal>
+                            <h1>Criar time</h1>
+
+                            <form>
+                                <span>NOME</span>
+                                <input name="newTeam" value={newTeam} onChange={this.handleInputChange} />
+                                <Button onClick={this.handleCreateTeam} size="big" type="submit">
+                                    Salvar
                         </Button>
-                        <Button onClick={closeTeamModal} size="small" color="gray">
-                            Cancelar
+                                <Button onClick={closeTeamModal} size="small" color="gray">
+                                    Cancelar
                         </Button>
-                    </form>
-                </Modal>
-            )}
-        </Container>
-    )
-  }
+                            </form>
+                        </Modal>
+                    )}
+                </TeamList>
+                <Logout onClick={signOut}>
+                    Sair
+                </Logout>
+            </Container>
+        )
+    }
 }
 
 const mapStateToProps = state => ({
@@ -91,6 +99,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators(TeamsActions, dispatch);
+    bindActionCreators({ ...TeamsActions, ...AuthActions}, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(TeamSwitcher);

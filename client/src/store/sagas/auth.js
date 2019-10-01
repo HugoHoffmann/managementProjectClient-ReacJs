@@ -11,7 +11,7 @@ export function* signIn({ email, password }){
         localStorage.setItem('@Management:token', response.data.token);
 
         yield put(AuthActions.signInSuccess(response.data.token))
-        yield push(put('/'));
+        yield put(push('/'));
     } catch (error) {
         console.log(error);
         yield put(toastrActions.add({
@@ -20,4 +20,11 @@ export function* signIn({ email, password }){
             message: 'Verifique as credenciais de acesso'
         }))
     }
+}
+
+export function* signOut(){
+    localStorage.removeItem('@Management:token');
+    localStorage.removeItem('@Management:team');
+
+    yield put(push('/signin'));
 }
