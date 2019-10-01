@@ -8,11 +8,12 @@ import api from '~/services/api';
 import MembersAction from '~/store/ducks/members';
 
 
+import Can from '~/components/Can';
 import Modal from '~/components/Modal';
 import Button from '~/styles/components/Button';
 import { MembersList, Invite } from './styles';
 
-class Members extends Component{
+class Members extends Component {
     static propTypes = {
         closeMembersModal: PropTypes.func.isRequired,
         getMembersRequest: PropTypes.func.isRequired,
@@ -36,7 +37,7 @@ class Members extends Component{
         roles: '',
     }
 
-    async componentDidMount(){
+    async componentDidMount() {
         const { getMembersRequest } = this.props;
 
         getMembersRequest();
@@ -63,38 +64,46 @@ class Members extends Component{
         inviteMemberRequest(invite)
     }
 
-    render(){
+    render() {
         const { roles, invite } = this.state;
         const { closeMembersModal, members } = this.props;
         return (
             <Modal size="big">
-            <h1>Novo Membro</h1>
-            <Invite>
-                <input name="invite" placeholder="Convidar para o time" value={invite} onChange={this.handleInputChange} />
-                <Button onClick={ this.handleInvite }>
-                    Enviar
+                <h1>Novo Membro</h1>
+                <Can checkPermission="invites_create">
+                    <Invite>
+                        <input name="invite" placeholder="Convidar para o time" value={invite} onChange={this.handleInputChange} />
+                        <Button onClick={this.handleInvite}>
+                            Enviar
+                    </Button>
+                    </Invite>
+                </Can>
+                <form>
+                    <MembersList>
+                        {members.data.map(member => (
+                            <li key={member.id}>
+                                <strong>{member.user.name}</strong>
+                                <Can checkRole="administrator">
+                                    { can => (
+
+                                        <Select
+                                            isMulti
+                                            isDisabled={!can}
+                                            options={roles}
+                                            value={member.roles}
+                                            getOptionLabel={role => role.name}
+                                            getOptionValue={role => role.id}
+                                            onChange={value => this.handleRolesChange(member.id, value)}
+                                        />
+                                    ) } 
+                                </Can>
+                            </li>
+                        ))}
+                    </MembersList>
+                    <Button onClick={closeMembersModal} filled={false} color="gray">
+                        Cancelar
                 </Button>
-            </Invite>
-            <form>
-                <MembersList>
-                    { members.data.map(member => (
-                        <li key={member.id}>
-                            <strong>{member.user.name}</strong>
-                            <Select 
-                                isMulti
-                                options={roles}
-                                value={member.roles}
-                                getOptionLabel={role => role.name}    
-                                getOptionValue={role => role.id}    
-                                onChange={value => this.handleRolesChange(member.id, value) }
-                            />  
-                        </li>
-                    )) }
-                </MembersList>
-                <Button onClick={closeMembersModal} filled={false} color="gray">
-                    Cancelar
-                </Button>
-            </form>
+                </form>
             </Modal>
         );
     }
@@ -105,10 +114,10 @@ Members.propTypes = {
 }
 
 const mapStateToProps = state => ({
-  members: state.members
+    members: state.members
 });
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators(MembersAction, dispatch);
+    bindActionCreators(MembersAction, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(Members);
