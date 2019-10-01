@@ -22,7 +22,6 @@ class SignIn extends Component{
     }
     handlesubmit = (e) => {
         e.preventDefault();
-        console.log('teste')
 
         const { email, password } = this.state;
 
