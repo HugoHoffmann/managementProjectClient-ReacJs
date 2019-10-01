@@ -4,6 +4,8 @@ import Immutable from 'seamless-immutable';
 const { Types, Creators } = createActions({
     openMembersModal: null,
     closeMembersModal: null,
+    getMembersRequest: null,
+    getMembersSuccess: ['data'],
 });
 
 
@@ -22,7 +24,12 @@ export const createSuccess = (state, { project }) => {
     return state.merge({ data: [...state.data, project] });
 }
 
+export const getSuccess = (state, { data }) =>{
+    return state.merge({ data });
+}
+
 export const reducer = createReducer(INITIAL_STATE, {
     [Types.CLOSE_MEMBERS_MODAL]: closeModal,
     [Types.OPEN_MEMBERS_MODAL]: openModal,
+    [Types.GET_MEMBERS_SUCCESS]: getSuccess,
 });
