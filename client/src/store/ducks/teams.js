@@ -4,6 +4,8 @@ import Immutable from 'seamless-immutable';
 const { Types, Creators } = createActions({
     getTeamsRequest: null,
     getTeamsSuccess: ['data'],
+    selectTeam: ['team'],
+
 });
 
 
@@ -12,13 +14,20 @@ export default Creators;
 
 const INITIAL_STATE = Immutable({
     data: [],
-
+    active: JSON.parse(localStorage.getItem('@Management:team')) || null,
 });
 
 export const getSuccess = (state, {data}) => {
     return state.merge({ data })
 }
 
+export const selectTeam = (state, {team}) => {
+    localStorage.setItem('@Management:team', JSON.stringify(team))
+    return state.merge({ active: team })
+
+}
+
 export const reducer = createReducer(INITIAL_STATE, {
     [Types.GET_TEAMS_SUCCESS]: getSuccess,
+    [Types.SELECT_TEAM]: selectTeam,
 });
