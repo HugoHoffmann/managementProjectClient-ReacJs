@@ -5,14 +5,29 @@ import { bindActionCreators } from 'redux';
 import ProjectsAction from '~/store/ducks/projects';
 
 import Button from '~/styles/components/Button';
+import Modal from '~/components/Modal';
 import { Container, Project } from './styles';
 
 class Projects extends Component {
     static propTypes = {
         getProjectsRequest: PropTypes.func.isRequired,
+        openProjectModal: PropTypes.func.isRequired,
+        closeProjectModal: PropTypes.func.isRequired,        
+        createProjectRequest: PropTypes.func.isRequired,        
         activeTeam: PropTypes.shape({
             name: PropTypes.string,
         }).isRequired,
+        projects: PropTypes.shape({
+            data: PropTypes.arrayOf(PropTypes.shape({
+                id: PropTypes.number,
+                title: PropTypes.string,   
+            })),
+            projectModalOpen: PropTypes.bool
+        }).isRequired,
+    }
+
+    state = {
+        newProject: '',
     }
 
     componentDidMount(){
@@ -21,18 +36,30 @@ class Projects extends Component {
         if(activeTeam){
             getProjectsRequest();
         }
+    }
 
+    handleInputChange = (e) => {
+        this.setState({ [e.target.name]: e.target.value });
+    }
+
+    handleCreateProject = () => {
+        const { createProjectRequest } = this.props;
+        const { newProject } = this.state;
+
+        createProjectRequest(newProject);
     }
 
     render() {
-        const { activeTeam, projects } = this.props;
+        const { activeTeam, projects, closeProjectModal, openProjectModal } = this.props;
+        const { newProject } = this.state;
+
         if (!activeTeam) return null;
         return (
             <Container>
                 <header>
                     <h1>{activeTeam.name}</h1>
                     <div>
-                        <Button onClick={() => { }}>
+                        <Button onClick={openProjectModal}>
                             + Novo
                         </Button>
                         <Button onClick={() => { }}>
@@ -45,7 +72,22 @@ class Projects extends Component {
                         <p>{project.title}</p>
                     </Project>
                 ))}
-               
+                { projects.projectModalOpen && (
+                    <Modal>
+                        <h1>Criar projeto</h1>
+                        <form>
+                            <span>NOME</span>
+                            <input name="newProject" onChange={this.handleInputChange} value={newProject}/>
+                            <Button onClick={ this.handleCreateProject }size="big" type="submit" >
+                                Salvar
+                            </Button>
+
+                            <Button onClick={closeProjectModal} size="small" color="gray" type="submit" >
+                                Cancelar
+                            </Button>
+                        </form>
+                    </Modal>
+                )}
             </Container>)
     }
 }
