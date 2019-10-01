@@ -27,5 +27,23 @@ export function* updateMember({ id, roles }){
             message: 'contate o suporte'
         }) )
     }
+}
 
+
+export function* inviteMember({ email }){
+    try {
+        yield call(api.post, 'invites', {invites: [email]});
+
+        yield put(toastrActions.add({
+            type: 'success',
+            title: 'Convite enviado',
+            message: 'Convite enviado para o email'
+        }) )
+    } catch (error) {
+        yield put(toastrActions.add({
+            type: 'error',
+            title: 'Erro na operação',
+            message: 'contate o suporte'
+        }) )
+    }
 }
