@@ -78,10 +78,10 @@ class TeamSwitcher extends Component {
                                 <input name="newTeam" value={newTeam} onChange={this.handleInputChange} />
                                 <Button onClick={this.handleCreateTeam} size="big" type="submit">
                                     Salvar
-                        </Button>
+                                </Button>
                                 <Button onClick={closeTeamModal} size="small" color="gray">
                                     Cancelar
-                        </Button>
+                                </Button>
                             </form>
                         </Modal>
                     )}
